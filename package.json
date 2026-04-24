@@ -1,13 +1,1 @@
-{
-  "name": "admcast-fecisc",
-  "version": "1.0.0",
-  "description": "Site do podcast ADMcast FECISC – UECE",
-  "scripts": {
-  "build": "npx --yes astro build",
-    "preview": "astro preview"
-  },
-  "dependencies": {
-    "astro": "^4.0.0",
-    "contentful": "^10.0.0"
-  }
-}
+{"name":"admcast-fecisc","version":"1.0.0","description":"Site do podcast ADMcast FECISC","scripts":{"build":"astro build","preview":"astro preview","dev":"astro dev"},"dependencies":{"astro":"^4.0.0","contentful":"^10.0.0"}}
