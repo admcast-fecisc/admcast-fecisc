@@ -1,0 +1,37 @@
+---
+const { title = 'ADMcast FECISC – Podcast de Extensão' } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content="O podcast que transforma ciência, extensão e cultura em conteúdo acessível para a comunidade de Canindé e além. Produzido pelos estudantes da FECISC/UECE." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style is:global>
+    :root {
+      --orange: #E85D26;
+      --orange-light: #FF7A42;
+      --orange-pale: #FFF0E8;
+      --dark: #1A1410;
+      --dark-mid: #2E2118;
+      --gray: #8A7E75;
+      --light: #FAF7F4;
+      --white: #FFFFFF;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+  </style>
+</head>
+<body>
+  <slot />
+</body>
+</html>

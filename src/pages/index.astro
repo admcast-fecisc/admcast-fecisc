@@ -1,0 +1,392 @@
+---
+import Base from '../layouts/Base.astro';
+import EpisodioCard from '../components/EpisodioCard.astro';
+import { getEpisodios, getConfiguracoes } from '../lib/storyblok.js';
+
+let episodios = [];
+let config = null;
+let erroStoryblok = false;
+
+try {
+  [episodios, config] = await Promise.all([getEpisodios(), getConfiguracoes()]);
+} catch (e) {
+  erroStoryblok = true;
+  console.warn('Contentful não configurado ainda. Configure o .env para carregar conteúdo dinâmico.');
+}
+
+const descricaoHero = config?.descricaoHero ?? 'O podcast que transforma ciência, extensão e cultura em conteúdo acessível para a comunidade de Canindé e além. Produzido pelos estudantes de Administração e Pedagogia da FECISC/UECE.';
+const sobreTexto = config?.sobreTexto ?? null;
+const linkSpotify = config?.linkSpotify ?? '#';
+const linkYoutube = config?.linkYoutube ?? '#';
+const linkInstagram = config?.linkInstagram ?? '#';
+const linkFacebook = config?.linkFacebook ?? '#';
+---
+
+<Base>
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <div class="logo-icon">ADM</div>
+      <span class="logo-text">ADM<span>cast</span></span>
+    </a>
+    <ul>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#episodios">Episódios</a></li>
+      <li><a href="#cronograma">Cronograma</a></li>
+      <li><a href="#plataformas">Onde Ouvir</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-pattern"></div>
+    <div class="hero-badge">
+      <div class="badge-dot"></div>
+      Podcast de Extensão · FECISC/UECE
+    </div>
+    <h1 class="hero-title">
+      <span class="highlight">ADMcast</span>
+      <span class="sub">FECISC · UECE</span>
+    </h1>
+    <p class="hero-desc">{descricaoHero}</p>
+    <div class="hero-ctas">
+      <a href="#episodios" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Ouça Agora
+      </a>
+      <a href="#sobre" class="btn-ghost">Saiba Mais</a>
+    </div>
+    <div class="hero-scroll"><div class="scroll-line"></div></div>
+  </section>
+
+  <!-- LOGO -->
+  <section class="logo-section">
+    <div class="logo-main">
+      <div class="logo-big-icon">
+        <div class="logo-mic">
+          <div class="logo-mic-body"></div>
+          <div class="logo-mic-stand"></div>
+          <div class="logo-mic-base"></div>
+        </div>
+      </div>
+      <div class="logo-name">ADM<span>cast</span></div>
+      <div class="logo-tagline">Podcast de extensão · FECISC / UECE</div>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section class="about" id="sobre">
+    <div class="about-grid">
+      <div>
+        <div class="about-tag">Sobre o Projeto</div>
+        <h2 class="about-title">Ciência que fala a língua da comunidade</h2>
+        {sobreTexto
+          ? sobreTexto.split('\n').map((p) => <p class="about-text">{p}</p>)
+          : <>
+              <p class="about-text">O ADMcast FECISC é um podcast produzido por estudantes dos cursos de Administração e Pedagogia da Faculdade de Educação e Ciências Integradas do Sertão de Canindé (FECISC/UECE).</p>
+              <p class="about-text">Com episódios sobre pesquisas, eventos, visitas técnicas e ações extensionistas, o podcast conecta a universidade com a comunidade de Canindé e municípios vizinhos de forma acessível e contemporânea.</p>
+              <p class="about-text">Parte do curso de extensão <strong>Com(Ciência) e Extensão</strong>, com 25 horas de atividades distribuídas entre abril e novembro de 2026.</p>
+            </>
+        }
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num">25h</div>
+          <div class="stat-label">Carga horária total do projeto</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">20</div>
+          <div class="stat-label">Vagas para estudantes participantes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">2K+</div>
+          <div class="stat-label">Meta de reproduções em 2026</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">10+</div>
+          <div class="stat-label">Professores e pesquisadores entrevistados</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EPISÓDIOS -->
+  <section class="episodios-section" id="episodios">
+    <div class="section-label">Conteúdo</div>
+    <h2 class="section-title light">Episódios</h2>
+
+    {erroStoryblok && (
+      <div class="aviso-contentful">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Contentful ainda não configurado. Configure o arquivo <code>.env</code> com suas credenciais para exibir os episódios.
+      </div>
+    )}
+
+    {!erroStoryblok && episodios.length === 0 && (
+      <div class="aviso-contentful aviso-vazio">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+        Nenhum episódio publicado ainda. Adicione episódios no painel do Contentful!
+      </div>
+    )}
+
+    {episodios.length > 0 && (
+      <div class="ep-grid">
+        {episodios.map((ep) => <EpisodioCard episodio={ep} />)}
+      </div>
+    )}
+  </section>
+
+  <!-- O QUE FAZEMOS -->
+  <section class="what-section">
+    <div class="section-label">Conteúdo</div>
+    <h2 class="section-title light">O que você vai encontrar</h2>
+    <div class="features-grid">
+      {[
+        { icon: 'mic', title: 'Episódios do Podcast', text: 'Pesquisas científicas, ações de extensão e atividades da FECISC em linguagem acessível para todos.' },
+        { icon: 'calendar', title: 'Eventos e Cobertura', text: 'Semana Universitária 2026, Jogos Universitários, eventos científicos, visitas técnicas e aulas de campo.' },
+        { icon: 'users', title: 'Vozes da Comunidade', text: 'Depoimentos de membros da comunidade civil beneficiada pelas ações de extensão da FECISC/UECE.' },
+        { icon: 'flask', title: 'Laboratórios', text: 'Conheça os espaços de pesquisa e o que está sendo desenvolvido nos cursos de Adm e Pedagogia.' },
+        { icon: 'globe', title: 'Alcance Digital', text: 'Disponível no Spotify, YouTube e demais plataformas. Ciência ao alcance de todos.' },
+        { icon: 'star', title: 'Protagonismo Estudantil', text: 'Produzido inteiramente pelos estudantes: roteirização, edição, entrevistas e redes sociais.' },
+      ].map(({ icon, title, text }) => (
+        <div class="feature-card">
+          <div class="feature-icon">
+            {icon === 'mic' && <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3M8 22h8"/></svg>}
+            {icon === 'calendar' && <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>}
+            {icon === 'users' && <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
+            {icon === 'flask' && <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>}
+            {icon === 'globe' && <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>}
+            {icon === 'star' && <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>}
+          </div>
+          <div class="feature-title">{title}</div>
+          <div class="feature-text">{text}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- CRONOGRAMA -->
+  <section class="timeline-section" id="cronograma">
+    <div class="section-label">Agenda 2026</div>
+    <h2 class="section-title dark">Cronograma</h2>
+    <div class="timeline">
+      {[
+        { n: '01', periodo: 'Maio/2026', atividade: 'Aula inaugural – apresentação do projeto, equipe e ferramentas', ch: '1h · Presencial na FECISC' },
+        { n: '02', periodo: 'Maio/2026', atividade: 'Capacitação: fundamentos de podcast, roteirização e comunicação digital', ch: '1h · Presencial na FECISC' },
+        { n: '03', periodo: 'Maio/2026', atividade: 'Mapeamento de eventos e ações da FECISC (Adm + Pedagogia)', ch: '1h · Presencial na FECISC' },
+        { n: '04', periodo: 'Maio/2026', atividade: 'Criação da identidade visual e calendário editorial do podcast', ch: '4h · Presencial na FECISC' },
+        { n: '05', periodo: 'Jun – Out/2026', atividade: 'Gravação e edição dos episódios (eventos e extensão)', ch: '14h · Presencial na FECISC' },
+        { n: '06', periodo: 'Nov/2026', atividade: 'Avaliação, coleta de depoimentos e relatório final', ch: '4h · Presencial na FECISC' },
+      ].map(({ n, periodo, atividade, ch }) => (
+        <div class="timeline-item">
+          <div class="timeline-dot">{n}</div>
+          <div class="timeline-content">
+            <div class="timeline-period">{periodo}</div>
+            <div class="timeline-activity">{atividade}</div>
+            <div class="timeline-ch">{ch}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- PLATAFORMAS -->
+  <section class="platforms" id="plataformas">
+    <div class="section-label">Onde Ouvir</div>
+    <h2 class="section-title light">Disponível em</h2>
+    <div class="platform-chips">
+      <a href={linkSpotify} target="_blank" rel="noopener" class="chip"><div class="chip-dot" style="background:#1DB954"></div>Spotify</a>
+      <a href={linkYoutube} target="_blank" rel="noopener" class="chip"><div class="chip-dot" style="background:#FF0000"></div>YouTube</a>
+      <div class="chip"><div class="chip-dot" style="background:#4285F4"></div>Google Podcasts</div>
+      <a href={linkInstagram} target="_blank" rel="noopener" class="chip"><div class="chip-dot" style="background:#E1306C"></div>Instagram</a>
+      <a href={linkFacebook} target="_blank" rel="noopener" class="chip"><div class="chip-dot" style="background:#1877F2"></div>Facebook</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">ADM<span>cast</span></div>
+    <div class="footer-sub">FECISC · Faculdade de Educação e Ciências Integradas do Sertão de Canindé</div>
+    <div class="footer-sub">UECE · Universidade Estadual do Ceará</div>
+    <hr class="footer-divider" />
+    <div class="footer-copy">© 2026 ADMcast FECISC · Projeto de Extensão · PROEX/UECE · Curso Com(Ciência) e Extensão</div>
+  </footer>
+</Base>
+
+<style>
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 3rem;
+    background: rgba(26,20,16,0.92);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-icon {
+    width: 38px; height: 38px; background: var(--orange); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px;
+    color: white; letter-spacing: -0.5px;
+  }
+  .logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; color: var(--white); }
+  .logo-text span { color: var(--orange-light); }
+  nav ul { display: flex; gap: 2rem; list-style: none; }
+  nav ul a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+  nav ul a:hover { color: var(--orange-light); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; background: var(--dark);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 6rem 3rem 4rem; position: relative; overflow: hidden;
+  }
+  .hero-bg-pattern {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(232,93,38,0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(255,179,71,0.08) 0%, transparent 50%);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(232,93,38,0.15); border: 1px solid rgba(232,93,38,0.35);
+    border-radius: 100px; padding: 6px 16px; font-size: 13px;
+    color: var(--orange-light); font-weight: 500; margin-bottom: 2rem;
+  }
+  .badge-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--orange);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
+  .hero-title {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: clamp(3.5rem,8vw,7rem); color: var(--white);
+    text-align: center; line-height: 0.95; letter-spacing: -3px;
+    margin-bottom: 1.5rem; position: relative;
+  }
+  .hero-title .highlight { color: var(--orange); display: block; }
+  .hero-title .sub {
+    font-size: clamp(1.8rem,3.5vw,3rem); color: rgba(255,255,255,0.35);
+    display: block; letter-spacing: -1px; margin-top: 0.3rem;
+  }
+  .hero-desc {
+    max-width: 560px; text-align: center; color: rgba(255,255,255,0.55);
+    font-size: 16px; line-height: 1.7; margin-bottom: 2.5rem; position: relative;
+  }
+  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; position: relative; }
+  .btn-primary {
+    background: var(--orange); color: white; border: none;
+    padding: 14px 32px; border-radius: 100px; font-size: 15px; font-weight: 500;
+    font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-primary:hover { background: var(--orange-light); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent; color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.2); padding: 14px 32px;
+    border-radius: 100px; font-size: 15px; font-family: 'Inter', sans-serif;
+    cursor: pointer; text-decoration: none; transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: white; }
+  .hero-scroll {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+    animation: scrollAnim 1.8s ease-in-out infinite;
+  }
+  @keyframes scrollAnim { 0%{opacity:0;transform:scaleY(0);transform-origin:top} 50%{opacity:1} 100%{opacity:0;transform:scaleY(1);transform-origin:top} }
+
+  /* LOGO SECTION */
+  .logo-section { background: var(--white); padding: 5rem 3rem; text-align: center; }
+  .logo-main { display: inline-flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+  .logo-big-icon {
+    width: 120px; height: 120px; background: var(--dark); border-radius: 28px;
+    display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+  }
+  .logo-big-icon::before { content:''; position:absolute; width:90px; height:90px; border-radius:50%; border:3px solid var(--orange); opacity:.3; }
+  .logo-big-icon::after { content:''; position:absolute; width:55px; height:55px; border-radius:50%; border:3px solid var(--orange-light); opacity:.5; }
+  .logo-mic { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; }
+  .logo-mic-body { width:22px; height:34px; background:var(--orange); border-radius:11px; }
+  .logo-mic-stand { width:28px; height:2px; background:var(--orange-light); margin-top:5px; }
+  .logo-mic-base { width:20px; height:2px; background:var(--orange-light); margin-top:4px; }
+  .logo-name { font-family:'Syne',sans-serif; font-weight:800; font-size:2.8rem; letter-spacing:-2px; color:var(--dark); }
+  .logo-name span { color:var(--orange); }
+  .logo-tagline { font-size:14px; color:var(--gray); letter-spacing:2px; text-transform:uppercase; }
+
+  /* SECTION HELPERS */
+  .section-label { text-align:center; font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--orange); font-weight:500; margin-bottom:1rem; }
+  .section-title { font-family:'Syne',sans-serif; font-weight:700; font-size:clamp(2rem,4vw,3rem); text-align:center; margin-bottom:3rem; letter-spacing:-1px; }
+  .section-title.light { color:var(--white); }
+  .section-title.dark { color:var(--dark); }
+
+  /* ABOUT */
+  .about { padding:6rem 3rem; background:var(--light); max-width:1200px; margin:0 auto; }
+  .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; max-width:1000px; margin:0 auto; }
+  .about-tag { display:inline-block; background:var(--orange-pale); color:var(--orange); border-radius:6px; padding:5px 12px; font-size:12px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:1.5rem; }
+  .about-title { font-family:'Syne',sans-serif; font-weight:700; font-size:2.2rem; line-height:1.1; letter-spacing:-1px; margin-bottom:1.5rem; color:var(--dark); }
+  .about-text { color:var(--gray); font-size:16px; line-height:1.8; margin-bottom:1.2rem; }
+  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+  .stat-card { background:var(--white); border-radius:16px; padding:1.5rem; border:1px solid rgba(0,0,0,0.06); }
+  .stat-num { font-family:'Syne',sans-serif; font-weight:800; font-size:2.4rem; color:var(--orange); letter-spacing:-2px; line-height:1; margin-bottom:.4rem; }
+  .stat-label { font-size:13px; color:var(--gray); line-height:1.4; }
+
+  /* EPISÓDIOS */
+  .episodios-section { background:var(--dark); padding:6rem 3rem; }
+  .ep-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.5rem; max-width:1100px; margin:0 auto; }
+  .aviso-contentful {
+    max-width:600px; margin:0 auto; padding:1.2rem 1.5rem;
+    background:rgba(232,93,38,0.1); border:1px solid rgba(232,93,38,0.25);
+    border-radius:12px; color:rgba(255,255,255,0.7); font-size:14px; line-height:1.6;
+    display:flex; align-items:flex-start; gap:10px;
+  }
+  .aviso-contentful code { background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; font-size:13px; }
+  .aviso-vazio { background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.1); }
+
+  /* FEATURES */
+  .what-section { background:var(--dark); padding:6rem 3rem; }
+  .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; max-width:1000px; margin:0 auto; }
+  .feature-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:2rem; transition:border-color .2s,background .2s; }
+  .feature-card:hover { border-color:rgba(232,93,38,0.4); background:rgba(232,93,38,0.05); }
+  .feature-icon { width:44px; height:44px; background:rgba(232,93,38,0.15); border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:1.2rem; }
+  .feature-icon svg { width:22px; height:22px; stroke:var(--orange); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .feature-title { font-family:'Syne',sans-serif; font-weight:600; font-size:1.1rem; color:var(--white); margin-bottom:.7rem; letter-spacing:-.3px; }
+  .feature-text { font-size:14px; color:rgba(255,255,255,0.45); line-height:1.7; }
+
+  /* CRONOGRAMA */
+  .timeline-section { background:var(--light); padding:6rem 3rem; }
+  .timeline { max-width:700px; margin:0 auto; position:relative; }
+  .timeline::before { content:''; position:absolute; left:20px; top:8px; bottom:8px; width:2px; background:linear-gradient(to bottom,var(--orange),rgba(232,93,38,0.1)); }
+  .timeline-item { display:flex; gap:1.5rem; margin-bottom:2rem; position:relative; }
+  .timeline-dot { width:42px; height:42px; min-width:42px; border-radius:50%; background:var(--white); border:2px solid var(--orange); display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:700; font-size:13px; color:var(--orange); position:relative; z-index:2; }
+  .timeline-content { background:var(--white); border-radius:14px; padding:1.2rem 1.5rem; border:1px solid rgba(0,0,0,0.06); flex:1; }
+  .timeline-period { font-size:12px; color:var(--orange); font-weight:500; letter-spacing:.5px; text-transform:uppercase; margin-bottom:4px; }
+  .timeline-activity { font-size:15px; font-weight:500; color:var(--dark); line-height:1.4; margin-bottom:4px; }
+  .timeline-ch { font-size:12px; color:var(--gray); }
+
+  /* PLATAFORMAS */
+  .platforms { background:var(--dark); padding:5rem 3rem; text-align:center; }
+  .platform-chips { display:flex; justify-content:center; flex-wrap:wrap; gap:1rem; max-width:600px; margin:0 auto; }
+  .chip { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:100px; padding:12px 24px; font-size:14px; font-weight:500; color:rgba(255,255,255,0.75); display:flex; align-items:center; gap:8px; transition:border-color .2s; text-decoration:none; }
+  .chip:hover { border-color:var(--orange); color:white; }
+  .chip-dot { width:8px; height:8px; border-radius:50%; }
+
+  /* FOOTER */
+  footer { background:#0F0B08; padding:3rem; text-align:center; }
+  .footer-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.6rem; color:var(--white); letter-spacing:-1px; margin-bottom:.5rem; }
+  .footer-logo span { color:var(--orange); }
+  .footer-sub { font-size:13px; color:rgba(255,255,255,0.3); margin-bottom:.3rem; }
+  .footer-divider { border:none; border-top:1px solid rgba(255,255,255,0.06); margin:2rem auto; max-width:300px; }
+  .footer-copy { font-size:12px; color:rgba(255,255,255,0.2); }
+
+  @media (max-width:768px) {
+    nav { padding:1rem 1.5rem; }
+    nav ul li:nth-child(3), nav ul li:nth-child(4) { display:none; }
+    .about-grid { grid-template-columns:1fr; gap:3rem; }
+    .features-grid { grid-template-columns:1fr; }
+    .about, .what-section, .episodios-section, .timeline-section, .platforms { padding:4rem 1.5rem; }
+  }
+</style>
