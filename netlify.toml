@@ -1,0 +1,3 @@
+﻿[build]
+  command = "npx --yes astro@4 build"
+  publish = "dist"
