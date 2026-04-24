@@ -4,7 +4,7 @@
   "description": "Site do podcast ADMcast FECISC – UECE",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+   "build": "npx astro build",
     "preview": "astro preview"
   },
   "dependencies": {
